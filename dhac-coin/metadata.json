@@ -1,0 +1,6 @@
+{
+  "name": "DHAC Coin Portal",
+  "description": "Comprehensive student merit coin tracking, faculty mentor group analytics, and institutional awards portal for Darul Huda Islamic University Assam Centre.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1007 @@
+{
+  "entities": {
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Authorized Super Admin registry document keyed by Firebase Auth UID.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the Super Admin.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified institutional admin email.",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "role": {
+          "type": "string",
+          "description": "Elevated administrative role.",
+          "enum": ["SUPER_ADMIN"]
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when admin record was provisioned."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when admin record was last updated."
+        }
+      },
+      "required": ["uid", "email", "role", "createdAt", "updatedAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public/institutional non-PII user profile and RBAC role assignment keyed by Firebase Auth UID.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Institutional display name.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "role": {
+          "type": "string",
+          "description": "Institutional access role.",
+          "enum": ["SUPER_ADMIN", "TEACHER_ADMIN", "STUDENT", "VIEWER"]
+        },
+        "username": {
+          "type": "string",
+          "description": "Optional portal username identifier.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Official DHAC staff ID when role is TEACHER_ADMIN.",
+          "maxLength": 32
+        },
+        "mentorDocId": {
+          "type": "string",
+          "description": "Firestore document ID in mentors collection.",
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "mentorName": {
+          "type": "string",
+          "description": "Assigned mentor display name.",
+          "maxLength": 100
+        },
+        "studentDocId": {
+          "type": "string",
+          "description": "Firestore document ID in students collection when role is STUDENT.",
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "adNo": {
+          "type": "string",
+          "description": "Student admission number.",
+          "maxLength": 20
+        },
+        "className": {
+          "type": "string",
+          "description": "Student academic class code.",
+          "maxLength": 16
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "Profile avatar URL or compact data URI.",
+          "maxLength": 50000
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when profile was created."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when profile was updated."
+        }
+      },
+      "required": ["uid", "displayName", "role", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated PII subcollection document storing user email and auth provider metadata.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID matching parent user document.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified Google account email address.",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "providerId": {
+          "type": "string",
+          "description": "Authentication provider identifier.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when PII record was created."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when PII record was updated."
+        }
+      },
+      "required": ["uid", "email", "providerId", "createdAt", "updatedAt"]
+    },
+    "MentorRecord": {
+      "title": "MentorRecord",
+      "description": "Faculty mentor profile record in Darul Huda Assam Centre.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Firestore document ID for mentor (e.g., STAFF-01).",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "serialNo": {
+          "type": "string",
+          "description": "Two-digit staff serial number.",
+          "minLength": 1,
+          "maxLength": 8
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Official institutional staff identifier (e.g., DHAC/STAFF/01).",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "name": {
+          "type": "string",
+          "description": "Full institutional name of the faculty mentor.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "username": {
+          "type": "string",
+          "description": "Staff portal identifier (e.g., STAFF.SHAFI).",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "assignedEmail": {
+          "type": "string",
+          "format": "email",
+          "description": "Optional Google email authorized by Super Admin for this mentor.",
+          "maxLength": 160
+        },
+        "isPublicDirectory": {
+          "type": "boolean",
+          "description": "Indicates inclusion in the campus mentor directory."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when mentor was added."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when mentor was last updated."
+        }
+      },
+      "required": ["id", "serialNo", "teacherId", "name", "username", "isPublicDirectory", "createdAt", "updatedAt"]
+    },
+    "StudentRecord": {
+      "title": "StudentRecord",
+      "description": "Institutional student merit coin balance, tier, and cohort rankings.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique student document ID (e.g., STU-635).",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Canonical student identifier matching id.",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "officialId": {
+          "type": "string",
+          "description": "Institutional ID string DHAC/ST/2026/[CLASS]/[ADNO].",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "adNo": {
+          "type": "string",
+          "description": "Admission number.",
+          "minLength": 1,
+          "maxLength": 20
+        },
+        "adFlag": {
+          "type": "string",
+          "description": "Admission number validation flag.",
+          "enum": ["VALID", "ORIGINAL_ASTERISK", "MISSING_AD"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Student full name.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "className": {
+          "type": "string",
+          "description": "Academic class code (S1A..D2).",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "batchName": {
+          "type": "string",
+          "description": "Union or batch title.",
+          "maxLength": 48
+        },
+        "mentorName": {
+          "type": "string",
+          "description": "Assigned faculty mentor name.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "totalCoins": {
+          "type": "integer",
+          "description": "Current cumulative confirmed merit coins (non-negative integer)."
+        },
+        "coinStatus": {
+          "type": "string",
+          "description": "Status of student coin ledger balance.",
+          "enum": ["CONFIRMED", "MISSING_OR_ZERO", "ASSUMED_ZERO", "ZERO"]
+        },
+        "mentorGroupRank": {
+          "type": "string",
+          "description": "Formatted mentor group rank string.",
+          "minLength": 1,
+          "maxLength": 24
+        },
+        "mentorRankNum": {
+          "type": "integer",
+          "description": "Numeric mentor group rank (>= 1)."
+        },
+        "mentorGroupSize": {
+          "type": "integer",
+          "description": "Total students in mentor group (>= 1)."
+        },
+        "classRank": {
+          "type": "string",
+          "description": "Formatted class rank string.",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "classRankNum": {
+          "type": "integer",
+          "description": "Numeric class rank (>= 1)."
+        },
+        "classSize": {
+          "type": "integer",
+          "description": "Total students in class cohort (>= 1)."
+        },
+        "campusRank": {
+          "type": "string",
+          "description": "Formatted campus rank string.",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "campusRankNum": {
+          "type": "integer",
+          "description": "Numeric campus-wide competition rank (>= 1)."
+        },
+        "campusTotalStudents": {
+          "type": "integer",
+          "description": "Total students in campus cohort (>= 1)."
+        },
+        "rankStatus": {
+          "type": "string",
+          "description": "Official or provisional ranking classification.",
+          "enum": ["OFFICIAL", "PROVISIONAL"]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Registry audit notes.",
+          "maxLength": 500
+        },
+        "tier": {
+          "type": "string",
+          "description": "Merit medal tier derived from totalCoins.",
+          "enum": ["Diamond", "Gold", "Silver", "Bronze", "Starter", "Zero"]
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "Compact student portrait data URL.",
+          "maxLength": 50000
+        },
+        "linkedUid": {
+          "type": "string",
+          "description": "Firebase Auth UID linked to this student profile.",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentEmail": {
+          "type": "string",
+          "format": "email",
+          "description": "Optional pre-authorized student email.",
+          "maxLength": 160
+        },
+        "isPublicCohort": {
+          "type": "boolean",
+          "description": "True when student is an active member of the public cohort leaderboard."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when student record was created."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp when student record was updated."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "officialId",
+        "adNo",
+        "adFlag",
+        "name",
+        "className",
+        "batchName",
+        "mentorName",
+        "totalCoins",
+        "coinStatus",
+        "mentorGroupRank",
+        "mentorRankNum",
+        "mentorGroupSize",
+        "classRank",
+        "classRankNum",
+        "classSize",
+        "campusRank",
+        "campusRankNum",
+        "campusTotalStudents",
+        "rankStatus",
+        "notes",
+        "tier",
+        "isPublicCohort",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CoinCategoryDoc": {
+      "title": "CoinCategoryDoc",
+      "description": "Official DHAC Merit Coin Rules category with bounded list of activity criteria.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Category document ID.",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "categoryName": {
+          "type": "string",
+          "description": "Category title.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional category summary.",
+          "maxLength": 300
+        },
+        "sortOrder": {
+          "type": "integer",
+          "description": "Display ordering index."
+        },
+        "activities": {
+          "type": "array",
+          "description": "Bounded list of up to 50 activity coin rules."
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Whether category is active."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": ["id", "categoryName", "sortOrder", "activities", "isActive", "createdAt", "updatedAt"]
+    },
+    "UnionDoc": {
+      "title": "UnionDoc",
+      "description": "Student Union batch configuration mapping classes to campus unions.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Union document ID.",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "unionName": {
+          "type": "string",
+          "description": "Union name.",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "classes": {
+          "type": "array",
+          "description": "Bounded list of up to 12 class codes belonging to this union."
+        },
+        "category": {
+          "type": "string",
+          "description": "Educational division.",
+          "enum": ["Degree", "Higher Secondary", "Secondary"]
+        },
+        "isNoUnionBatch": {
+          "type": "boolean",
+          "description": "Indicates batch has no union formed yet."
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Whether union is active."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": ["id", "unionName", "classes", "category", "isActive", "createdAt", "updatedAt"]
+    },
+    "ClassAwardDoc": {
+      "title": "ClassAwardDoc",
+      "description": "Direct batch-level merit coin total awarded to an entire class.",
+      "type": "object",
+      "properties": {
+        "className": {
+          "type": "string",
+          "description": "Class identifier (e.g., S4, HS1, D2).",
+          "minLength": 1,
+          "maxLength": 16,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "awardCoins": {
+          "type": "integer",
+          "description": "Non-negative total batch coins awarded directly to this class."
+        },
+        "isPublicStanding": {
+          "type": "boolean",
+          "description": "Indicates visibility in public batch standings."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": ["className", "awardCoins", "isPublicStanding", "createdAt", "updatedAt"]
+    },
+    "CoinClaimDoc": {
+      "title": "CoinClaimDoc",
+      "description": "Student-submitted activity merit claim awaiting faculty mentor or admin verification.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique claim ID (CLM-...).",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "submittedByUid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the submitting user.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentDocId": {
+          "type": "string",
+          "description": "Target student document ID in students collection.",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Canonical student ID.",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Student full name.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "adNo": {
+          "type": "string",
+          "description": "Student admission number.",
+          "minLength": 1,
+          "maxLength": 20
+        },
+        "className": {
+          "type": "string",
+          "description": "Student class code.",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "mentorName": {
+          "type": "string",
+          "description": "Assigned mentor name.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "category": {
+          "type": "string",
+          "description": "Coin rule category.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "activityName": {
+          "type": "string",
+          "description": "Activity rule name.",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "coins": {
+          "type": "integer",
+          "description": "Claimed positive integer coin amount (1..500)."
+        },
+        "proofNotes": {
+          "type": "string",
+          "description": "Activity proof notes provided by student.",
+          "maxLength": 1000
+        },
+        "submittedAt": {
+          "type": "string",
+          "description": "Formatted submission timestamp label.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "status": {
+          "type": "string",
+          "description": "Claim workflow state.",
+          "enum": ["PENDING", "APPROVED", "REJECTED"]
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer display name.",
+          "maxLength": 120
+        },
+        "reviewedByUid": {
+          "type": "string",
+          "description": "Firebase Auth UID of reviewing mentor or admin.",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "reviewedAt": {
+          "type": "string",
+          "description": "Formatted review timestamp label.",
+          "maxLength": 64
+        },
+        "rejectionReason": {
+          "type": "string",
+          "description": "Optional rejection reason.",
+          "maxLength": 500
+        },
+        "auditDocId": {
+          "type": "string",
+          "description": "Deterministic audit log document ID created in same batch.",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "facultyVisible": {
+          "type": "boolean",
+          "description": "True so faculty queue queries can list verified claims."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": [
+        "id",
+        "submittedByUid",
+        "studentDocId",
+        "studentId",
+        "studentName",
+        "adNo",
+        "className",
+        "mentorName",
+        "category",
+        "activityName",
+        "coins",
+        "submittedAt",
+        "status",
+        "auditDocId",
+        "facultyVisible",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CoinTransactionDoc": {
+      "title": "CoinTransactionDoc",
+      "description": "Immutable official coin award ledger entry.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique transaction ID (TX-...).",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Formatted transaction timestamp label.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "targetType": {
+          "type": "string",
+          "description": "Whether transaction credits an individual student or an entire class.",
+          "enum": ["STUDENT", "CLASS"]
+        },
+        "studentDocId": {
+          "type": "string",
+          "description": "Target student document ID when targetType is STUDENT.",
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Canonical student ID.",
+          "maxLength": 32
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Student full name.",
+          "maxLength": 120
+        },
+        "adNo": {
+          "type": "string",
+          "description": "Student admission number.",
+          "maxLength": 20
+        },
+        "className": {
+          "type": "string",
+          "description": "Academic class code.",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "category": {
+          "type": "string",
+          "description": "Award category.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "activityName": {
+          "type": "string",
+          "description": "Award activity title.",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "coins": {
+          "type": "integer",
+          "description": "Positive integer coin amount credited (1..500)."
+        },
+        "awardedBy": {
+          "type": "string",
+          "description": "Authorizing faculty/admin name.",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "awardedByUid": {
+          "type": "string",
+          "description": "Firebase Auth UID of authorizing faculty or admin.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional ledger notes.",
+          "maxLength": 1000
+        },
+        "auditDocId": {
+          "type": "string",
+          "description": "Deterministic audit log document ID created in same batch.",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "isPublicLedger": {
+          "type": "boolean",
+          "description": "True when transaction is part of the verified institutional ledger."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": [
+        "id",
+        "timestamp",
+        "targetType",
+        "className",
+        "category",
+        "activityName",
+        "coins",
+        "awardedBy",
+        "awardedByUid",
+        "auditDocId",
+        "isPublicLedger",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AuditLogDoc": {
+      "title": "AuditLogDoc",
+      "description": "Append-only security and ledger audit log entry.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique audit log ID.",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "action": {
+          "type": "string",
+          "description": "Audit event action code.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "actorUid": {
+          "type": "string",
+          "description": "Firebase Auth UID of actor.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "actorName": {
+          "type": "string",
+          "description": "Display name of actor.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "targetPath": {
+          "type": "string",
+          "description": "Firestore document or collection path affected.",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable audit summary.",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "isAuditEntry": {
+          "type": "boolean",
+          "description": "Always true for verified audit log documents."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": ["id", "action", "actorUid", "actorName", "targetPath", "summary", "isAuditEntry", "createdAt", "updatedAt"]
+    },
+    "PortalQueueDoc": {
+      "title": "PortalQueueDoc",
+      "description": "Bounded faculty confirmation queue document for real-time mentor approval desk.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Queue document identifier (pending_claims).",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "items": {
+          "type": "array",
+          "description": "Bounded array of up to 100 active and recent coin claims."
+        },
+        "lastClaimId": {
+          "type": "string",
+          "description": "Most recently created or updated claim ID for atomic relational sync.",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "totalCount": {
+          "type": "integer",
+          "description": "Total pending claims count."
+        },
+        "updatedByUid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user who updated the queue.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": ["id", "items", "lastClaimId", "totalCount", "updatedByUid", "createdAt", "updatedAt"]
+    },
+    "PublicViewDoc": {
+      "title": "PublicViewDoc",
+      "description": "Single-document public leaderboard summary for pre-login viewing without open collection list queries.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "View document identifier (leaderboard_summary).",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "isPublicView": {
+          "type": "boolean",
+          "description": "Marks document eligible for single-doc public get."
+        },
+        "classAwards": {
+          "type": "object",
+          "description": "Map of className to bonus batch coins."
+        },
+        "topStudents": {
+          "type": "array",
+          "description": "Bounded list of up to 350 compact public student standing snapshots."
+        },
+        "teachers": {
+          "type": "array",
+          "description": "Bounded list of up to 100 public faculty mentor directory entries."
+        },
+        "coinCategories": {
+          "type": "array",
+          "description": "Bounded list of up to 50 coin criteria categories."
+        },
+        "unions": {
+          "type": "array",
+          "description": "Bounded list of up to 30 campus union definitions."
+        },
+        "lastTxId": {
+          "type": "string",
+          "description": "Latest transaction or claim ID synced into this view.",
+          "maxLength": 64
+        },
+        "summaryNote": {
+          "type": "string",
+          "description": "Human-readable status note.",
+          "maxLength": 200
+        },
+        "updatedByUid": {
+          "type": "string",
+          "description": "Firebase Auth UID of updating actor.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore server timestamp."
+        }
+      },
+      "required": ["id", "isPublicView", "updatedByUid", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminUid}": {
+      "schema": { "$ref": "#/entities/AdminRecord" },
+      "description": "Super Admin role registry documents keyed by Firebase Auth UID."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Non-PII institutional user profile and RBAC role assignment."
+    },
+    "/users/{userId}/private/{privateDocId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Isolated PII subcollection storing verified user email and provider details."
+    },
+    "/mentors/{mentorDocId}": {
+      "schema": { "$ref": "#/entities/MentorRecord" },
+      "description": "Faculty mentor directory records."
+    },
+    "/students/{studentDocId}": {
+      "schema": { "$ref": "#/entities/StudentRecord" },
+      "description": "Student merit coin balances and rankings."
+    },
+    "/coin_categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/CoinCategoryDoc" },
+      "description": "Institutional coin rules matrix categories."
+    },
+    "/unions/{unionId}": {
+      "schema": { "$ref": "#/entities/UnionDoc" },
+      "description": "Campus student unions and associated class lists."
+    },
+    "/class_awards/{classId}": {
+      "schema": { "$ref": "#/entities/ClassAwardDoc" },
+      "description": "Direct batch-level merit coin balances by class."
+    },
+    "/coin_claims/{claimId}": {
+      "schema": { "$ref": "#/entities/CoinClaimDoc" },
+      "description": "Student-submitted coin claims subject to mentor confirmation."
+    },
+    "/coin_transactions/{txId}": {
+      "schema": { "$ref": "#/entities/CoinTransactionDoc" },
+      "description": "Official coin award transaction ledger."
+    },
+    "/audit_logs/{auditId}": {
+      "schema": { "$ref": "#/entities/AuditLogDoc" },
+      "description": "Append-only security and coin mutation audit logs."
+    },
+    "/portal_queues/{queueId}": {
+      "schema": { "$ref": "#/entities/PortalQueueDoc" },
+      "description": "Bounded faculty confirmation queue for real-time mentor approval desk."
+    },
+    "/public_views/{viewId}": {
+      "schema": { "$ref": "#/entities/PublicViewDoc" },
+      "description": "Single-document public standing snapshot for pre-sign-in portal preview."
+    }
+  }
+}
